@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft FPS Boost Mods Hub</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&amp;family=Orbitron:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+  html, body { height: 100%; margin: 0; }
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: #080c14;
+    color: #e2e8f0;
+  }
+
+  .app-wrapper {
+    width: 100%;
+    min-height: 100%;
+    overflow: auto;
+    background: #080c14;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(5, 150, 105, 0.06) 0%, transparent 60%);
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, #10b981 0%, #34d399 40%, #6ee7b7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+  }
+
+  .credit-badge {
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, #065f46, #047857);
+    border: 1px solid #10b981;
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.5); }
+  }
+
+  .mod-card {
+    background: linear-gradient(145deg, #0f1923, #131d2a);
+    border: 1px solid #1a2a3a;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mod-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #10b981, transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .mod-card:hover {
+    transform: translateY(-4px);
+    border-color: #10b981;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.15);
+  }
+
+  .mod-card:hover::before {
+    opacity: 1;
+  }
+
+  .dl-btn {
+    background: linear-gradient(135deg, #059669, #10b981);
+    transition: all 0.2s;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .dl-btn:hover {
+    background: linear-gradient(135deg, #047857, #059669);
+    transform: scale(1.02);
+  }
+
+  .search-input {
+    background: #0f1923;
+    border: 1px solid #1a2a3a;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus {
+    border-color: #10b981;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  }
+
+  .category-btn {
+    background: #0f1923;
+    border: 1px solid #1a2a3a;
+    transition: all 0.2s;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+  }
+
+  .category-btn.active {
+    background: linear-gradient(135deg, #065f46, #047857);
+    border-color: #10b981;
+    color: #6ee7b7;
+  }
+
+  .category-btn:hover:not(.active) {
+    border-color: #10b981;
+    color: #10b981;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-rendering { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; }
+  .tag-server { background: rgba(59, 130, 246, 0.15); color: #93c5fd; }
+  .tag-memory { background: rgba(168, 85, 247, 0.15); color: #c4b5fd; }
+  .tag-utility { background: rgba(251, 191, 36, 0.15); color: #fcd34d; }
+  .tag-lighting { background: rgba(251, 146, 60, 0.15); color: #fdba74; }
+  .tag-world { background: rgba(45, 212, 191, 0.15); color: #5eead4; }
+  .tag-audio { background: rgba(244, 114, 182, 0.15); color: #f9a8d4; }
+  .tag-network { background: rgba(96, 165, 250, 0.15); color: #93c5fd; }
+  .tag-textures { background: rgba(74, 222, 128, 0.15); color: #86efac; }
+
+  .tag-pvp { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+  .tag-vanilla { background: rgba(34, 197, 94, 0.15); color: #86efac; }
+
+  .stats-bar {
+    background: #0a0f18;
+    border-bottom: 1px solid #1a2a3a;
+  }
+
+  .toast-msg {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: linear-gradient(135deg, #065f46, #047857);
+    border: 1px solid #10b981;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+
+  .toast-msg.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  .fade-in {
+    animation: fadeUp 0.4s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .source-icon {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    border-radius: 3px;
+  }
+
+  .source-modrinth { background: #1bd96a; }
+  .source-curseforge { background: #f16436; }
+  .source-both {
+    background: linear-gradient(135deg, #1bd96a 50%, #f16436 50%);
+  }
+</style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="app-wrapper" id="app-wrapper">
+   <!-- Toast -->
+   <div class="toast-msg" id="toast"></div><!-- Stats Bar -->
+   <header class="stats-bar px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+     <div class="credit-badge px-4 py-2 rounded-lg text-sm tracking-wider" id="credit-text">
+      ⚡ Made By HaarisWarriorOP
+     </div>
+     <div class="flex items-center gap-4 text-sm text-slate-400">
+      <span id="mod-count">0 mods</span> <span class="flex items-center gap-1"><span class="source-icon source-modrinth"></span> Modrinth</span> <span class="flex items-center gap-1"><span class="source-icon source-curseforge"></span> CurseForge</span> <span class="flex items-center gap-1"><span class="source-icon source-both"></span> Both</span>
+     </div>
+    </div>
+   </header>
+   <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Hero -->
+    <section class="text-center mb-10">
+     <h1 class="hero-title text-3xl md:text-5xl font-black mb-3" id="site-title">MINECRAFT FPS BOOST MODS</h1>
+     <p class="text-slate-400 text-lg max-w-2xl mx-auto">The ultimate collection of performance &amp; optimization mods from Modrinth and CurseForge + Premium Texture Packs</p>
+    </section><!-- Search & Filter -->
+    <nav class="mb-8" aria-label="Search and filter mods">
+     <div class="flex flex-col md:flex-row gap-4 mb-4">
+      <div class="relative flex-1">
+       <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"></i> <input type="text" id="search-input" class="search-input w-full pl-10 pr-4 py-3 rounded-lg text-white text-base" placeholder="Search mods..." aria-label="Search mods">
+      </div><select id="sort-select" class="search-input px-4 py-3 rounded-lg text-white cursor-pointer" aria-label="Sort mods"> <option value="name">Sort: A-Z</option> <option value="name-desc">Sort: Z-A</option> <option value="category">Sort: Category</option> </select>
+     </div>
+     <div class="flex flex-wrap gap-2" id="category-filters" role="group" aria-label="Filter by category"></div>
+    </nav><!-- Mods Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" id="mods-grid" role="list">
+    </div><!-- No results -->
+    <div id="no-results" class="hidden text-center py-16 text-slate-500">
+     <i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3"></i>
+     <p class="text-xl font-semibold">No mods found</p>
+     <p class="text-sm mt-1">Try a different search or filter</p>
+    </div>
+   </main>
+  </div>
+  <footer class="text-center py-6 text-slate-600 text-sm border-t border-slate-800">
+   <p>All mods link to their official pages. Download at your own discretion.</p>
+  </footer>
+  <script>
+const MODS = [
+  // === RENDERING / FPS ===
+  { name:"Sodium", desc:"Modern rendering engine replacement. Massive FPS improvement.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/sodium", curseforge:"https://www.curseforge.com/minecraft/mc-mods/sodium" },
+  { name:"Embeddium", desc:"Fork of Sodium for Forge with extra compatibility.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/embeddium", curseforge:"https://www.curseforge.com/minecraft/mc-mods/embeddium" },
+  { name:"Rubidium", desc:"Unofficial Forge port of Sodium rendering engine.", category:"Rendering", tags:["rendering"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/rubidium" },
+  { name:"Iris Shaders", desc:"Shader mod compatible with Sodium for stunning visuals.", category:"Rendering", tags:["rendering","lighting"], source:"both", modrinth:"https://modrinth.com/mod/iris", curseforge:"https://www.curseforge.com/minecraft/mc-mods/irisshaders" },
+  { name:"Oculus", desc:"Forge shader mod, port of Iris for Forge.", category:"Rendering", tags:["rendering","lighting"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/oculus" },
+  { name:"Sodium Extra", desc:"Extra options and features for Sodium.", category:"Rendering", tags:["rendering","utility"], source:"both", modrinth:"https://modrinth.com/mod/sodium-extra", curseforge:"https://www.curseforge.com/minecraft/mc-mods/sodium-extra" },
+  { name:"Nvidium", desc:"Uses mesh shaders on NVIDIA GPUs for huge FPS gains.", category:"Rendering", tags:["rendering"], source:"modrinth", modrinth:"https://modrinth.com/mod/nvidium" },
+  { name:"ImmediatelyFast", desc:"Speed up all immediate mode rendering.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/immediatelyfast", curseforge:"https://www.curseforge.com/minecraft/mc-mods/immediatelyfast" },
+  { name:"Indium", desc:"Sodium addon providing Fabric Rendering API support.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/indium", curseforge:"https://www.curseforge.com/minecraft/mc-mods/indium" },
+  { name:"Reese's Sodium Options", desc:"Better UI for Sodium's video settings screen.", category:"Rendering", tags:["rendering","utility"], source:"both", modrinth:"https://modrinth.com/mod/reeses-sodium-options", curseforge:"https://www.curseforge.com/minecraft/mc-mods/reeses-sodium-options" },
+  { name:"Entity Culling", desc:"Skips rendering entities that aren't visible.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/entityculling", curseforge:"https://www.curseforge.com/minecraft/mc-mods/entityculling" },
+  { name:"More Culling", desc:"Extends culling to block entities and more.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/moreculling", curseforge:"https://www.curseforge.com/minecraft/mc-mods/moreculling" },
+  { name:"Enhanced Block Entities", desc:"Faster block entity rendering using baked models.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/ebe", curseforge:"https://www.curseforge.com/minecraft/mc-mods/enhanced-block-entities" },
+  { name:"BetterFps - Render Distance", desc:"Optimizes chunk rendering distance handling.", category:"Rendering", tags:["rendering"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/betterfps-render-distance" },
+  { name:"CullLeaves", desc:"Culls leaves for better FPS in forests.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/cull-leaves", curseforge:"https://www.curseforge.com/minecraft/mc-mods/cull-leaves" },
+  { name:"CullLessLeaves", desc:"Configurable leaf culling, less aggressive.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/cull-less-leaves", curseforge:"https://www.curseforge.com/minecraft/mc-mods/cull-less-leaves" },
+  { name:"Capes", desc:"Lightweight cape renderer with no FPS loss.", category:"Rendering", tags:["rendering","utility"], source:"both", modrinth:"https://modrinth.com/mod/capes", curseforge:"https://www.curseforge.com/minecraft/mc-mods/capes" },
+
+  // === SERVER / LOGIC OPTIMIZATION ===
+  { name:"Lithium", desc:"Optimizes game physics, mob AI, and game logic.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/lithium", curseforge:"https://www.curseforge.com/minecraft/mc-mods/lithium" },
+  { name:"Canary", desc:"General optimization mod for Forge, inspired by Lithium.", category:"Server Logic", tags:["server"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/canary" },
+  { name:"ServerCore", desc:"Optimizes server performance with multiple tweaks.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/servercore", curseforge:"https://www.curseforge.com/minecraft/mc-mods/servercore" },
+  { name:"Alternate Current", desc:"Efficient redstone dust implementation.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/alternate-current", curseforge:"https://www.curseforge.com/minecraft/mc-mods/alternate-current" },
+  { name:"Concurrent Chunk Management Engine (C2ME)", desc:"Multi-threaded chunk generation and loading.", category:"Server Logic", tags:["server","world"], source:"both", modrinth:"https://modrinth.com/mod/c2me-fabric", curseforge:"https://www.curseforge.com/minecraft/mc-mods/c2me-fabric" },
+  { name:"Chunky", desc:"Pre-generates chunks to reduce lag spikes.", category:"Server Logic", tags:["server","world"], source:"both", modrinth:"https://modrinth.com/mod/chunky", curseforge:"https://www.curseforge.com/minecraft/mc-mods/chunky-pregenerator" },
+  { name:"Noisium", desc:"Optimizes worldgen noise for faster chunk generation.", category:"Server Logic", tags:["server","world"], source:"both", modrinth:"https://modrinth.com/mod/noisium", curseforge:"https://www.curseforge.com/minecraft/mc-mods/noisium" },
+  { name:"Let Me Despawn", desc:"Fixes mobs holding items never despawning.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/lmd", curseforge:"https://www.curseforge.com/minecraft/mc-mods/let-me-despawn" },
+  { name:"Recipe Cache", desc:"Caches recipe lookups for faster crafting.", category:"Server Logic", tags:["server"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/recipe-cache" },
+  { name:"Clumps", desc:"Groups XP orbs together to reduce lag.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/clumps", curseforge:"https://www.curseforge.com/minecraft/mc-mods/clumps" },
+  { name:"Get It Together, Drops!", desc:"Merges item drops to reduce entity count.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/get-it-together-drops", curseforge:"https://www.curseforge.com/minecraft/mc-mods/get-it-together-drops" },
+
+  // === MEMORY ===
+  { name:"FerriteCore", desc:"Reduces RAM usage significantly.", category:"Memory", tags:["memory"], source:"both", modrinth:"https://modrinth.com/mod/ferrite-core", curseforge:"https://www.curseforge.com/minecraft/mc-mods/ferritecore" },
+  { name:"ModernFix", desc:"All-in-one performance mod: memory, load times, FPS.", category:"Memory", tags:["memory","rendering","server"], source:"both", modrinth:"https://modrinth.com/mod/modernfix", curseforge:"https://www.curseforge.com/minecraft/mc-mods/modernfix" },
+  { name:"Memory Leak Fix", desc:"Fixes multiple vanilla memory leaks.", category:"Memory", tags:["memory"], source:"both", modrinth:"https://modrinth.com/mod/memoryleakfix", curseforge:"https://www.curseforge.com/minecraft/mc-mods/memoryleakfix" },
+  { name:"Hydrogen", desc:"Reduces memory usage of Minecraft's data structures.", category:"Memory", tags:["memory"], source:"modrinth", modrinth:"https://modrinth.com/mod/hydrogen" },
+
+  // === NETWORK ===
+  { name:"Krypton", desc:"Optimizes Minecraft networking stack.", category:"Network", tags:["network"], source:"both", modrinth:"https://modrinth.com/mod/krypton", curseforge:"https://www.curseforge.com/minecraft/mc-mods/krypton" },
+  { name:"Raknetify", desc:"Uses RakNet protocol for better network performance.", category:"Network", tags:["network"], source:"both", modrinth:"https://modrinth.com/mod/raknetify", curseforge:"https://www.curseforge.com/minecraft/mc-mods/raknetify" },
+  { name:"Velocity", desc:"High-performance Minecraft proxy server.", category:"Network", tags:["network","server"], source:"modrinth", modrinth:"https://modrinth.com/software/velocity" },
+
+  // === LIGHTING ===
+  { name:"Starlight", desc:"Rewrites light engine for faster lighting.", category:"Lighting", tags:["lighting"], source:"both", modrinth:"https://modrinth.com/mod/starlight", curseforge:"https://www.curseforge.com/minecraft/mc-mods/starlight" },
+  { name:"Lambda Better Grass", desc:"OptiFine-like better grass with good performance.", category:"Lighting", tags:["lighting","rendering"], source:"modrinth", modrinth:"https://modrinth.com/mod/lambdabettergrass" },
+  { name:"LambDynamicLights", desc:"Dynamic lights without OptiFine.", category:"Lighting", tags:["lighting"], source:"modrinth", modrinth:"https://modrinth.com/mod/lambdynamiclights" },
+  { name:"Phosphor", desc:"Lighting engine optimizations (pre-1.19).", category:"Lighting", tags:["lighting"], source:"both", modrinth:"https://modrinth.com/mod/phosphor", curseforge:"https://www.curseforge.com/minecraft/mc-mods/phosphor" },
+
+  // === WORLD / CHUNKS ===
+  { name:"Distant Horizons", desc:"See much farther with LOD chunks.", category:"World", tags:["world","rendering"], source:"both", modrinth:"https://modrinth.com/mod/distanthorizons", curseforge:"https://www.curseforge.com/minecraft/mc-mods/distant-horizons" },
+  { name:"Bobby", desc:"Caches chunks beyond server view distance.", category:"World", tags:["world"], source:"both", modrinth:"https://modrinth.com/mod/bobby", curseforge:"https://www.curseforge.com/minecraft/mc-mods/bobby" },
+  { name:"Exordium", desc:"Reduces GUI render updates for FPS gain.", category:"World", tags:["world","rendering"], source:"both", modrinth:"https://modrinth.com/mod/exordium", curseforge:"https://www.curseforge.com/minecraft/mc-mods/exordium" },
+  { name:"Chunk Sending Tweaks", desc:"Optimizes how chunks are sent to clients.", category:"World", tags:["world","network"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/chunk-sending-tweaks" },
+
+  // === TEXTURES / ASSETS ===
+  { name:"Continuity", desc:"OptiFine connected textures for Fabric.", category:"Textures", tags:["textures","rendering"], source:"both", modrinth:"https://modrinth.com/mod/continuity", curseforge:"https://www.curseforge.com/minecraft/mc-mods/continuity" },
+  { name:"OptiGUI", desc:"OptiFine custom GUI textures for Fabric.", category:"Textures", tags:["textures"], source:"both", modrinth:"https://modrinth.com/mod/optigui", curseforge:"https://www.curseforge.com/minecraft/mc-mods/optigui" },
+  { name:"Animatica", desc:"OptiFine animated textures for Fabric.", category:"Textures", tags:["textures"], source:"both", modrinth:"https://modrinth.com/mod/animatica", curseforge:"https://www.curseforge.com/minecraft/mc-mods/animatica" },
+  { name:"CIT Resewn", desc:"Custom Item Textures support (like OptiFine CIT).", category:"Textures", tags:["textures"], source:"both", modrinth:"https://modrinth.com/mod/cit-resewn", curseforge:"https://www.curseforge.com/minecraft/mc-mods/cit-resewn" },
+  { name:"FabricSkyboxes", desc:"Custom skyboxes for Fabric.", category:"Textures", tags:["textures","rendering"], source:"both", modrinth:"https://modrinth.com/mod/fabricskyboxes", curseforge:"https://www.curseforge.com/minecraft/mc-mods/fabricskyboxes" },
+  { name:"Entity Model Features", desc:"OptiFine custom entity models for Fabric.", category:"Textures", tags:["textures","rendering"], source:"both", modrinth:"https://modrinth.com/mod/entity-model-features", curseforge:"https://www.curseforge.com/minecraft/mc-mods/entity-model-features" },
+  { name:"Entity Texture Features", desc:"OptiFine entity texture features for Fabric.", category:"Textures", tags:["textures"], source:"both", modrinth:"https://modrinth.com/mod/entitytexturefeatures", curseforge:"https://www.curseforge.com/minecraft/mc-mods/entity-texture-features-fabric" },
+  { name:"MoreMcmeta", desc:"Animated and custom textures support.", category:"Textures", tags:["textures"], source:"both", modrinth:"https://modrinth.com/mod/moremcmeta", curseforge:"https://www.curseforge.com/minecraft/mc-mods/moremcmeta" },
+
+  // === AUDIO ===
+  { name:"Sound Physics Remastered", desc:"Realistic reverb and sound occlusion.", category:"Audio", tags:["audio"], source:"both", modrinth:"https://modrinth.com/mod/sound-physics-remastered", curseforge:"https://www.curseforge.com/minecraft/mc-mods/sound-physics-remastered" },
+  { name:"Presence Footsteps", desc:"Enhanced footstep sounds based on surface.", category:"Audio", tags:["audio"], source:"both", modrinth:"https://modrinth.com/mod/presence-footsteps", curseforge:"https://www.curseforge.com/minecraft/mc-mods/presence-footsteps" },
+  { name:"Drip Sounds", desc:"Adds dripping water sounds in caves.", category:"Audio", tags:["audio"], source:"both", modrinth:"https://modrinth.com/mod/dripsounds-fabric", curseforge:"https://www.curseforge.com/minecraft/mc-mods/drip-sounds-fabric" },
+
+  // === UTILITY / STARTUP / GENERAL ===
+  { name:"Dynamic FPS", desc:"Reduces FPS when game is unfocused or minimized.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/dynamic-fps", curseforge:"https://www.curseforge.com/minecraft/mc-mods/dynamic-fps" },
+  { name:"Mod Menu", desc:"In-game mod configuration menu for Fabric.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/modmenu", curseforge:"https://www.curseforge.com/minecraft/mc-mods/modmenu" },
+  { name:"Cloth Config", desc:"Config library used by many mods.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/cloth-config", curseforge:"https://www.curseforge.com/minecraft/mc-mods/cloth-config" },
+  { name:"Debugify", desc:"Fixes Mojang bugs for better performance and behavior.", category:"Utility", tags:["utility","server"], source:"both", modrinth:"https://modrinth.com/mod/debugify", curseforge:"https://www.curseforge.com/minecraft/mc-mods/debugify" },
+  { name:"LazyDFU", desc:"Defers DataFixerUpper init for faster startup.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/lazydfu", curseforge:"https://www.curseforge.com/minecraft/mc-mods/lazydfu" },
+  { name:"Lazy Language Loader", desc:"Loads languages lazily for faster startup.", category:"Utility", tags:["utility"], source:"modrinth", modrinth:"https://modrinth.com/mod/lazy-language-loader" },
+  { name:"Smooth Boot", desc:"Optimizes CPU usage during game boot.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/smoothboot-fabric", curseforge:"https://www.curseforge.com/minecraft/mc-mods/smooth-boot" },
+  { name:"FastQuit", desc:"Saves worlds in background so you quit instantly.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/fastquit", curseforge:"https://www.curseforge.com/minecraft/mc-mods/fastquit" },
+  { name:"FastLoad", desc:"Reduces world loading times.", category:"Utility", tags:["utility","world"], source:"both", modrinth:"https://modrinth.com/mod/fastload", curseforge:"https://www.curseforge.com/minecraft/mc-mods/fastload" },
+  { name:"Language Reload", desc:"Makes switching languages instant.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/language-reload", curseforge:"https://www.curseforge.com/minecraft/mc-mods/language-reload" },
+  { name:"No Chat Reports", desc:"Removes chat reporting for privacy.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/no-chat-reports", curseforge:"https://www.curseforge.com/minecraft/mc-mods/no-chat-reports" },
+  { name:"e4mc", desc:"Host LAN worlds over internet without port forwarding.", category:"Utility", tags:["utility","network"], source:"both", modrinth:"https://modrinth.com/mod/e4mc", curseforge:"https://www.curseforge.com/minecraft/mc-mods/e4mc" },
+  { name:"ToolTipFix", desc:"Fixes tooltips going off-screen.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/tooltipfix", curseforge:"https://www.curseforge.com/minecraft/mc-mods/tooltipfix" },
+  { name:"Model Gap Fix", desc:"Fixes visual gaps between block models.", category:"Utility", tags:["utility","rendering"], source:"both", modrinth:"https://modrinth.com/mod/modelfix", curseforge:"https://www.curseforge.com/minecraft/mc-mods/model-gap-fix" },
+  { name:"Borderless Mining", desc:"Fullscreen borderless window mode.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/borderless-mining", curseforge:"https://www.curseforge.com/minecraft/mc-mods/borderless-mining" },
+  { name:"Better Ping Display", desc:"Shows actual ping numbers in player list.", category:"Utility", tags:["utility","network"], source:"both", modrinth:"https://modrinth.com/mod/better-ping-display-fabric", curseforge:"https://www.curseforge.com/minecraft/mc-mods/better-ping-display" },
+  { name:"Zoomify", desc:"Configurable zoom mod like OptiFine zoom.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/zoomify", curseforge:"https://www.curseforge.com/minecraft/mc-mods/zoomify" },
+  { name:"Not Enough Crashes", desc:"Prevents full game crash; returns to title screen.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/notenoughcrashes", curseforge:"https://www.curseforge.com/minecraft/mc-mods/not-enough-crashes" },
+  { name:"Spark", desc:"Performance profiler for clients and servers.", category:"Utility", tags:["utility","server"], source:"both", modrinth:"https://modrinth.com/mod/spark", curseforge:"https://www.curseforge.com/minecraft/mc-mods/spark" },
+  { name:"Fabric API", desc:"Core API library for Fabric mods.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/fabric-api", curseforge:"https://www.curseforge.com/minecraft/mc-mods/fabric-api" },
+  { name:"Architectury API", desc:"Cross-platform API for Fabric and Forge.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/architectury-api", curseforge:"https://www.curseforge.com/minecraft/mc-mods/architectury-api" },
+  { name:"Forge Config API Port", desc:"Forge config system ported to Fabric.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/forge-config-api-port", curseforge:"https://www.curseforge.com/minecraft/mc-mods/forge-config-api-port-fabric" },
+  { name:"YetAnotherConfigLib", desc:"Modern config library for mod settings.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/yacl", curseforge:"https://www.curseforge.com/minecraft/mc-mods/yacl" },
+  { name:"Puzzle", desc:"Adds OptiFine resource pack features to Fabric.", category:"Utility", tags:["utility","textures"], source:"both", modrinth:"https://modrinth.com/mod/puzzle", curseforge:"https://www.curseforge.com/minecraft/mc-mods/puzzle" },
+  { name:"Very Many Players", desc:"Optimizations for servers with many players.", category:"Utility", tags:["utility","server","network"], source:"both", modrinth:"https://modrinth.com/mod/vmp-fabric", curseforge:"https://www.curseforge.com/minecraft/mc-mods/vmp-fabric" },
+  { name:"Kiwi", desc:"Minecraft modding library.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/kiwi", curseforge:"https://www.curseforge.com/minecraft/mc-mods/kiwi" },
+  { name:"NetherPortalFix", desc:"Fixes nether portal linking issues.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/netherportalfix", curseforge:"https://www.curseforge.com/minecraft/mc-mods/netherportalfix" },
+  { name:"Better Beds", desc:"Optimizes bed rendering.", category:"Utility", tags:["utility","rendering"], source:"modrinth", modrinth:"https://modrinth.com/mod/better-beds" },
+  { name:"Remove Reloading Screen", desc:"Removes resource pack reload screen.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/rrls", curseforge:"https://www.curseforge.com/minecraft/mc-mods/rrls" },
+  { name:"ScalableLux", desc:"Multithreaded light engine (replacement for Starlight).", category:"Lighting", tags:["lighting"], source:"modrinth", modrinth:"https://modrinth.com/mod/scalablelux" },
+  { name:"ThreadTweak", desc:"Optimizes thread priority for smoother gameplay.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/threadtweak", curseforge:"https://www.curseforge.com/minecraft/mc-mods/threadtweak" },
+  { name:"Radium", desc:"Lithium fork for Forge.", category:"Server Logic", tags:["server"], source:"modrinth", modrinth:"https://modrinth.com/mod/radium" },
+  { name:"Pluto", desc:"Optimizes internal data structures for less memory.", category:"Memory", tags:["memory"], source:"modrinth", modrinth:"https://modrinth.com/mod/pluto" },
+  { name:"Saturn", desc:"Reduces memory usage of Minecraft.", category:"Memory", tags:["memory"], source:"modrinth", modrinth:"https://modrinth.com/mod/saturn" },
+  { name:"Particle Core", desc:"Control and optimize particle rendering.", category:"Rendering", tags:["rendering"], source:"modrinth", modrinth:"https://modrinth.com/mod/particle-core" },
+  { name:"Lithosphere", desc:"Speeds up chunk data serialization.", category:"World", tags:["world"], source:"modrinth", modrinth:"https://modrinth.com/mod/lithosphere" },
+
+  // === ADDITIONAL RENDERING ===
+  { name:"Xycraft", desc:"Renders distant chunks as low-poly geometry.", category:"Rendering", tags:["rendering","world"], source:"modrinth", modrinth:"https://modrinth.com/mod/xycraft" },
+  { name:"Canvas", desc:"Modern rendering engine with shader support.", category:"Rendering", tags:["rendering"], source:"modrinth", modrinth:"https://modrinth.com/mod/canvas" },
+  { name:"Visuality", desc:"Adds visual effects without hurting FPS.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/visuality", curseforge:"https://www.curseforge.com/minecraft/mc-mods/visuality" },
+  { name:"Falling Leaves", desc:"Adds falling leaves particle effect.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/falling-leaves", curseforge:"https://www.curseforge.com/minecraft/mc-mods/falling-leaves" },
+  { name:"Better Animations Collection", desc:"Smooth animations without performance hit.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/better-animations-collection", curseforge:"https://www.curseforge.com/minecraft/mc-mods/better-animations-collection" },
+  { name:"Visual Workbench", desc:"Workbench shows items visually without lag.", category:"Rendering", tags:["rendering"], source:"both", modrinth:"https://modrinth.com/mod/visual-workbench", curseforge:"https://www.curseforge.com/minecraft/mc-mods/visual-workbench" },
+  { name:"Ambient Sounds", desc:"Atmospheric sounds without FPS loss.", category:"Audio", tags:["audio"], source:"both", modrinth:"https://modrinth.com/mod/ambientsounds", curseforge:"https://www.curseforge.com/minecraft/mc-mods/ambient-sounds" },
+
+  // === ADDITIONAL SERVER LOGIC ===
+  { name:"Lithium (Forge)", desc:"Lithium optimization for Forge servers.", category:"Server Logic", tags:["server"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/lithium-forge" },
+  { name:"AI Improvements", desc:"Better AI pathfinding without lag.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/ai-improvements", curseforge:"https://www.curseforge.com/minecraft/mc-mods/ai-improvements" },
+  { name:"Entity Collision FPS Fix", desc:"Optimizes entity collision detection.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/entity-collision-fps-fix", curseforge:"https://www.curseforge.com/minecraft/mc-mods/entity-collision-fps-fix" },
+  { name:"Bamboo Everything", desc:"Not FPS itself but reduces redundant calls.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/bamboo-everything", curseforge:"https://www.curseforge.com/minecraft/mc-mods/bamboo-everything" },
+  { name:"Mob Grinding Utils", desc:"Efficient mob farm configuration.", category:"Server Logic", tags:["server"], source:"both", modrinth:"https://modrinth.com/mod/mob-grinding-utils", curseforge:"https://www.curseforge.com/minecraft/mc-mods/mob-grinding-utils" },
+  { name:"Compact Machine", desc:"Reduces dimension/multiblock overhead.", category:"Server Logic", tags:["server","world"], source:"both", modrinth:"https://modrinth.com/mod/compactmachines", curseforge:"https://www.curseforge.com/minecraft/mc-mods/compact-machines" },
+
+  // === ADDITIONAL MEMORY ===
+  { name:"Pluto (Forge)", desc:"Memory optimization for Forge.", category:"Memory", tags:["memory"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/pluto" },
+  { name:"Better Biome Blend", desc:"Optimized biome blending calculation.", category:"Memory", tags:["memory","rendering"], source:"both", modrinth:"https://modrinth.com/mod/better-biome-blend", curseforge:"https://www.curseforge.com/minecraft/mc-mods/better-biome-blend" },
+  { name:"Language Reload Fix", desc:"Reduces memory leaks from language switching.", category:"Memory", tags:["memory","utility"], source:"both", modrinth:"https://modrinth.com/mod/language-reload-fix", curseforge:"https://www.curseforge.com/minecraft/mc-mods/language-reload-fix" },
+
+  // === ADDITIONAL NETWORK ===
+  { name:"Netty Reconfig", desc:"Optimizes network buffer sizes.", category:"Network", tags:["network"], source:"modrinth", modrinth:"https://modrinth.com/mod/netty-reconfig" },
+  { name:"Protocol Hack", desc:"Adds Protocol Hacks for network optimization.", category:"Network", tags:["network"], source:"both", modrinth:"https://modrinth.com/mod/protocol-hack", curseforge:"https://www.curseforge.com/minecraft/mc-mods/protocol-hack" },
+
+  // === ADDITIONAL LIGHTING ===
+  { name:"ScalableLux (Forge)", desc:"Multithreaded lighting for Forge.", category:"Lighting", tags:["lighting"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/scalablelux-forge" },
+  { name:"LitematicaBuild", desc:"Lighting optimization during building.", category:"Lighting", tags:["lighting"], source:"modrinth", modrinth:"https://modrinth.com/mod/litematicarebuild" },
+
+  // === ADDITIONAL WORLD ===
+  { name:"Faster Random", desc:"Uses faster random number generation.", category:"World", tags:["world"], source:"both", modrinth:"https://modrinth.com/mod/faster-random", curseforge:"https://www.curseforge.com/minecraft/mc-mods/faster-random" },
+  { name:"Chunk Pregenerator", desc:"Pre-generates chunks in background.", category:"World", tags:["world"], source:"both", modrinth:"https://modrinth.com/mod/chunk-pregenerator", curseforge:"https://www.curseforge.com/minecraft/mc-mods/chunk-pregenerator" },
+  { name:"NBT Crafting", desc:"Efficient NBT-based recipes.", category:"World", tags:["world"], source:"modrinth", modrinth:"https://modrinth.com/mod/nbt-crafting" },
+  { name:"Structures Compass", desc:"Efficient structure finding.", category:"World", tags:["world"], source:"both", modrinth:"https://modrinth.com/mod/structures-compass", curseforge:"https://www.curseforge.com/minecraft/mc-mods/structures-compass" },
+
+  // === ADDITIONAL TEXTURES ===
+  { name:"Custom Crosshair", desc:"Efficient custom crosshair support.", category:"Textures", tags:["textures"], source:"both", modrinth:"https://modrinth.com/mod/custom-crosshair-mod", curseforge:"https://www.curseforge.com/minecraft/mc-mods/custom-crosshair-mod" },
+  { name:"Particle Rain", desc:"Better rain particles without lag.", category:"Textures", tags:["textures","rendering"], source:"both", modrinth:"https://modrinth.com/mod/particle-rain", curseforge:"https://www.curseforge.com/minecraft/mc-mods/particle-rain" },
+  { name:"Splash", desc:"Splash screen customization.", category:"Textures", tags:["textures"], source:"both", modrinth:"https://modrinth.com/mod/splash", curseforge:"https://www.curseforge.com/minecraft/mc-mods/splash" },
+
+  // === ADDITIONAL AUDIO ===
+  { name:"Comprehensive Sounds", desc:"Better organized sound system.", category:"Audio", tags:["audio"], source:"modrinth", modrinth:"https://modrinth.com/mod/comprehensive-sounds" },
+  { name:"Ambient Additions", desc:"Extra ambient sound effects.", category:"Audio", tags:["audio"], source:"both", modrinth:"https://modrinth.com/mod/ambient-additions", curseforge:"https://www.curseforge.com/minecraft/mc-mods/ambient-additions" },
+
+  // === ADDITIONAL UTILITY ===
+  { name:"Item Scroller", desc:"Scroll through items efficiently.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/itemscroller", curseforge:"https://www.curseforge.com/minecraft/mc-mods/itemscroller" },
+  { name:"Mouse Tweaks", desc:"Better mouse interactions.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/mouse-tweaks", curseforge:"https://www.curseforge.com/minecraft/mc-mods/mouse-tweaks" },
+  { name:"MaLiLib", desc:"Utility library for mods.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/malilib", curseforge:"https://www.curseforge.com/minecraft/mc-mods/malilib" },
+  { name:"Litematica", desc:"Efficient schematic handling.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/litematica", curseforge:"https://www.curseforge.com/minecraft/mc-mods/litematica" },
+  { name:"Xaero's Minimap", desc:"Performance-friendly minimap.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/xaeros-minimap", curseforge:"https://www.curseforge.com/minecraft/mc-mods/xaeros-minimap" },
+  { name:"Xaero's World Map", desc:"Efficient world mapping.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/xaeros-world-map", curseforge:"https://www.curseforge.com/minecraft/mc-mods/xaeros-world-map" },
+  { name:"Waystones", desc:"Fast travel without lag.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/waystones", curseforge:"https://www.curseforge.com/minecraft/mc-mods/waystones" },
+  { name:"Jade", desc:"Efficient block/entity information display.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/jade", curseforge:"https://www.curseforge.com/minecraft/mc-mods/jade" },
+  { name:"JEI (Just Enough Items)", desc:"Efficient recipe lookup.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/jei", curseforge:"https://www.curseforge.com/minecraft/mc-mods/just-enough-items-jei" },
+  { name:"REI's Search", desc:"Lightweight JEI alternative.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/rei", curseforge:"https://www.curseforge.com/minecraft/mc-mods/roughly-enough-items" },
+  { name:"Controlling", desc:"Efficient keybind management.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/controlling", curseforge:"https://www.curseforge.com/minecraft/mc-mods/controlling" },
+  { name:"Appleskin", desc:"Lightweight food information.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/appleskin", curseforge:"https://www.curseforge.com/minecraft/mc-mods/appleskin" },
+  { name:"Status Effect Timer", desc:"Efficient status effect display.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/status-effect-timer", curseforge:"https://www.curseforge.com/minecraft/mc-mods/status-effect-timer" },
+  { name:"Patchouli", desc:"Lightweight recipe/documentation mod.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/patchouli", curseforge:"https://www.curseforge.com/minecraft/mc-mods/patchouli" },
+  { name:"Hwyla (Here's What You're Looking At)", desc:"Efficient block info display.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/hwyla", curseforge:"https://www.curseforge.com/minecraft/mc-mods/hwyla" },
+  { name:"Equipment Compare", desc:"Compare gear efficiently.", category:"Utility", tags:["utility"], source:"modrinth", modrinth:"https://modrinth.com/mod/equipment-compare" },
+  { name:"Catalogue", desc:"Efficient item catalog.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/catalogue", curseforge:"https://www.curseforge.com/minecraft/mc-mods/catalogue" },
+  { name:"Searchables", desc:"Efficient searchable containers.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/searchables", curseforge:"https://www.curseforge.com/minecraft/mc-mods/searchables" },
+  { name:"FancyMenu", desc:"Custom menu without performance hit.", category:"Utility", tags:["utility"], source:"both", modrinth:"https://modrinth.com/mod/fancymenu", curseforge:"https://www.curseforge.com/minecraft/mc-mods/fancymenu" },
+  { name:"Twitch IRC Chat", desc:"Efficient Twitch integration.", category:"Utility", tags:["utility"], source:"curseforge", curseforge:"https://www.curseforge.com/minecraft/mc-mods/twitch-irc-chat" },
+  { name:"Observer Cache", desc:"Caches observer block data.", category:"Utility", tags:["utility","server"], source:"modrinth", modrinth:"https://modrinth.com/mod/observer-cache" },
+];
+
+// State
+let currentFilter = 'All';
+let currentSearch = '';
+let currentSort = 'name';
+let allMods = [...MODS];
+
+// Categories
+const categories = ['All', ...new Set(MODS.map(m => m.category))].sort((a, b) => {
+  if (a === 'All') return -1;
+  if (b === 'All') return 1;
+  return a.localeCompare(b);
+});
+
+// Default config
+const defaultConfig = {
+  site_title: 'MINECRAFT FPS BOOST MODS',
+  credit_text: 'Made By HaarisWarriorOP',
+  background_color: '#080c14',
+  card_color: '#0f1923',
+  text_color: '#e2e8f0',
+  accent_color: '#10b981',
+  secondary_action_color: '#1a2a3a',
+  font_family: 'Rajdhani',
+  font_size: 16
+};
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function getSourceHTML(mod) {
+  const links = [];
+  if (mod.modrinth) links.push(`<a href="${mod.modrinth}" target="_blank" rel="noopener noreferrer" class="dl-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-white no-underline" aria-label="Download ${mod.name} from Modrinth"><span class="source-icon source-modrinth" style="width:12px;height:12px"></span>Modrinth</a>`);
+  if (mod.curseforge) links.push(`<a href="${mod.curseforge}" target="_blank" rel="noopener noreferrer" class="dl-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm text-white no-underline" style="background:linear-gradient(135deg,#c2410c,#f16436)" aria-label="Download ${mod.name} from CurseForge"><span class="source-icon source-curseforge" style="width:12px;height:12px"></span>CurseForge</a>`);
+  return links.join(' ');
+}
+
+function getTagHTML(tags) {
+  return tags.map(t => `<span class="tag tag-${t}">${t}</span>`).join(' ');
+}
+
+function getSourceBadge(source) {
+  if (source === 'both') return '<span class="source-icon source-both" title="Modrinth & CurseForge"></span>';
+  if (source === 'modrinth') return '<span class="source-icon source-modrinth" title="Modrinth"></span>';
+  return '<span class="source-icon source-curseforge" title="CurseForge"></span>';
+}
+
+function renderMods() {
+  let filtered = allMods;
+
+  if (currentFilter !== 'All') {
+    filtered = filtered.filter(m => m.category === currentFilter);
+  }
+
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    filtered = filtered.filter(m =>
+      m.name.toLowerCase().includes(q) ||
+      m.desc.toLowerCase().includes(q) ||
+      m.category.toLowerCase().includes(q) ||
+      m.tags.some(t => t.includes(q))
+    );
+  }
+
+  if (currentSort === 'name') filtered.sort((a, b) => a.name.localeCompare(b.name));
+  else if (currentSort === 'name-desc') filtered.sort((a, b) => b.name.localeCompare(a.name));
+  else if (currentSort === 'category') filtered.sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+
+  const grid = document.getElementById('mods-grid');
+  const noResults = document.getElementById('no-results');
+
+  grid.innerHTML = '';
+  if (filtered.length === 0) {
+    noResults.classList.remove('hidden');
+  } else {
+    noResults.classList.add('hidden');
+    filtered.forEach((mod, i) => {
+      const card = document.createElement('div');
+      card.className = 'mod-card rounded-xl p-4 fade-in';
+      card.style.animationDelay = `${Math.min(i * 30, 600)}ms`;
+      card.setAttribute('role', 'listitem');
+      card.innerHTML = `
+        <div class="flex items-start justify-between mb-2">
+          <h2 class="text-lg font-bold" style="font-family:'Orbitron',sans-serif;font-size:0.95rem;letter-spacing:0.5px">${mod.name}</h2>
+          ${getSourceBadge(mod.source)}
+        </div>
+        <p class="text-sm text-slate-400 mb-3 leading-relaxed">${mod.desc}</p>
+        <div class="flex flex-wrap gap-1 mb-3">${getTagHTML(mod.tags)}</div>
+        <div class="flex flex-wrap gap-2">${getSourceHTML(mod)}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  document.getElementById('mod-count').textContent = `${filtered.length} of ${allMods.length} mods`;
+}
+
+function renderTexturePacks() {
+  let filtered = TEXTURE_PACKS;
+
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    filtered = filtered.filter(tp =>
+      tp.name.toLowerCase().includes(q) ||
+      tp.desc.toLowerCase().includes(q) ||
+      tp.category.toLowerCase().includes(q)
+    );
+  }
+
+  filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+  const grid = document.getElementById('texture-grid');
+  const noResults = document.getElementById('no-texture-results');
+
+  grid.innerHTML = '';
+  if (filtered.length === 0) {
+    noResults.classList.remove('hidden');
+  } else {
+    noResults.classList.add('hidden');
+    filtered.forEach((tp, i) => {
+      const card = document.createElement('div');
+      card.className = 'mod-card rounded-xl p-4 fade-in';
+      card.style.animationDelay = `${Math.min(i * 30, 600)}ms`;
+      card.setAttribute('role', 'listitem');
+      card.innerHTML = `
+        <div class="flex items-start justify-between mb-2">
+          <h2 class="text-lg font-bold" style="font-family:'Orbitron',sans-serif;font-size:0.95rem;letter-spacing:0.5px">${tp.name}</h2>
+          <span class="text-xs px-2 py-1 rounded bg-purple-900/30 text-purple-300">TEXTURE PACK</span>
+        </div>
+        <p class="text-sm text-slate-400 mb-3 leading-relaxed">${tp.desc}</p>
+        <div class="flex flex-wrap gap-1">${getTagHTML(tp.tags)}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+}
+
+function renderCategories() {
+  const container = document.getElementById('category-filters');
+  container.innerHTML = '';
+  categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = `category-btn px-3 py-1.5 rounded-lg text-sm ${cat === currentFilter ? 'active' : 'text-slate-400'}`;
+    btn.textContent = cat;
+    btn.setAttribute('aria-pressed', cat === currentFilter);
+    btn.addEventListener('click', () => {
+      currentFilter = cat;
+      renderCategories();
+      renderMods();
+    });
+    container.appendChild(btn);
+  });
+}
+
+// Search for mods
+document.getElementById('search-input').addEventListener('input', (e) => {
+  currentSearch = e.target.value.trim();
+  renderMods();
+});
+
+// Sort
+document.getElementById('sort-select').addEventListener('change', (e) => {
+  currentSort = e.target.value;
+  renderMods();
+});
+
+// Apply config to UI
+function applyConfig(config) {
+  const c = { ...defaultConfig, ...config };
+  const titleEl = document.getElementById('site-title');
+  const creditEl = document.getElementById('credit-text');
+  const wrapper = document.getElementById('app-wrapper');
+
+  if (titleEl) titleEl.textContent = c.site_title || defaultConfig.site_title;
+  if (creditEl) creditEl.textContent = '⚡ ' + (c.credit_text || defaultConfig.credit_text);
+
+  // Colors
+  wrapper.style.background = c.background_color;
+  wrapper.style.backgroundImage = `radial-gradient(ellipse at 20% 0%, ${c.accent_color}14 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, ${c.accent_color}0F 0%, transparent 60%)`;
+
+  document.querySelectorAll('.mod-card').forEach(card => {
+    card.style.background = `linear-gradient(145deg, ${c.card_color}, ${c.card_color}dd)`;
+    card.style.borderColor = c.secondary_action_color;
+  });
+
+  document.querySelectorAll('.mod-card h2, .hero-title, .credit-badge').forEach(el => {
+    el.style.color = c.text_color;
+  });
+
+  // Font
+  const font = c.font_family || defaultConfig.font_family;
+  const baseSize = c.font_size || defaultConfig.font_size;
+  document.body.style.fontFamily = `${font}, Arial, sans-serif`;
+
+  if (titleEl) titleEl.style.fontFamily = `Orbitron, ${font}, sans-serif`;
+  document.querySelectorAll('p, .text-sm').forEach(el => {
+    el.style.fontSize = `${baseSize * 0.875}px`;
+  });
+  if (titleEl) titleEl.style.fontSize = `${baseSize * 2.5}px`;
+}
+
+// Element SDK init
+window.elementSdk.init({
+  defaultConfig,
+  onConfigChange: async (config) => {
+    applyConfig(config);
+  },
+  mapToCapabilities: (config) => ({
+    recolorables: [
+      { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+      { get: () => config.card_color || defaultConfig.card_color, set: (v) => { config.card_color = v; window.elementSdk.setConfig({ card_color: v }); } },
+      { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+      { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+      { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } },
+    ],
+    borderables: [],
+    fontEditable: {
+      get: () => config.font_family || defaultConfig.font_family,
+      set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+    },
+    fontSizeable: {
+      get: () => config.font_size || defaultConfig.font_size,
+      set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+    }
+  }),
+  mapToEditPanelValues: (config) => new Map([
+    ['site_title', config.site_title || defaultConfig.site_title],
+    ['credit_text', config.credit_text || defaultConfig.credit_text],
+  ])
+});
+
+// Initial render
+renderCategories();
+renderMods();
+lucide.createIcons();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dd032a9f2fc4412',t:'MTc3MzYyNjc3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
